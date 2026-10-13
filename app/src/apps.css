@@ -1,0 +1,25 @@
+.apps-sub { margin: -6px 0 12px; }
+.apps-search { display: flex; align-items: center; gap: 8px; background: var(--surface); border-radius: 999px; padding: 0 14px; height: 40px; color: var(--muted); }
+.apps-search input { flex: 1; background: none; border: 0; outline: 0; color: var(--text); font: inherit; padding: 0; margin: 0; }
+.apps-chips { display: flex; gap: 6px; overflow-x: auto; padding: 12px 0 4px; scrollbar-width: none; }
+.apps-chips .chip { flex: none; border: 1px solid var(--line); background: none; color: var(--muted); border-radius: 999px; padding: 5px 13px; font: inherit; font-size: 13px; cursor: pointer; }
+.apps-chips .chip.on { background: var(--text); color: var(--bg); border-color: var(--text); }
+.apps-list { margin: 6px 0 14px; max-height: 52vh; overflow-y: auto; }
+.apps-list h3 { display: flex; align-items: center; gap: 6px; }
+.app-row { border-radius: 14px; padding: 8px 6px; }
+.app-row:hover, .app-row.open { background: var(--surface); }
+.app-line { display: flex; align-items: center; gap: 12px; }
+.app-ico { flex: none; width: 38px; height: 38px; border-radius: 11px; background: var(--surface2); display: grid; place-items: center; font-weight: 700; font-size: 16px; }
+.app-main { flex: 1; min-width: 0; }
+.app-main .sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app-line .btn.small { flex: none; display: inline-flex; align-items: center; gap: 5px; }
+.app-line .btn.on { color: var(--accent); }
+.app-form { padding: 4px 6px 8px 56px; }
+.app-form .modal-foot { margin-top: 10px; }
+.apps-none { padding: 24px 0; text-align: center; }
+@media (max-width: 700px) { .app-form { padding-left: 6px; } }
+.nc-list { max-height: 56vh; margin-top: 12px; }
+.nc-row { display: flex; align-items: center; gap: 12px; width: 100%; background: none; border: 0; color: var(--text); font: inherit; text-align: left; cursor: pointer; }
+.nc-ico { background: var(--surface2); }
+.boss-star { color: var(--accent); margin-left: 6px; vertical-align: -1px; }
+.apps-search input:focus, .apps-search input { box-shadow: none !important; border: 0 !important; outline: 0 !important; background: none !important; }
