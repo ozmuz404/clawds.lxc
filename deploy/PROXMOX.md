@@ -16,7 +16,7 @@ Cambia 120, `local-lvm` y la plantilla segun tu Proxmox. Para tener la IP: `pct 
 Si no quieres SSH, sube el zip desde la interfaz web: contenedor > Console, o usa `pct push 120 clawds.zip /root/clawds.zip`.
 
 ## 2. Subir e instalar
-(Tambien puedes clonar el repositorio dentro del contenedor: `git clone <URL-DE-TU-FORK> clawds && cd clawds && bash deploy/install-lxc.sh`.)
+(Tambien puedes clonar el repositorio dentro del contenedor: `git clone https://github.com/ozmuz404/clawds clawds && cd clawds && bash deploy/install-lxc.sh`.)
 
 **Si creaste el contenedor desde la interfaz web** (con contrasena de root y sin llave SSH): Debian no deja entrar como root por SSH con contrasena, asi que sube el zip al host y metelo con `pct push`:
 ```

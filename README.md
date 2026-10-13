@@ -30,7 +30,7 @@ Full history in [CAMBIOS.md](CAMBIOS.md) (Spanish).
 ### Proxmox / Debian container (recommended)
 Follow [`deploy/PROXMOX.md`](deploy/PROXMOX.md) (Spanish). Inside the container, as root:
 ```bash
-git clone <URL-OF-THIS-FORK> clawds && cd clawds && bash deploy/install-lxc.sh
+git clone https://github.com/ozmuz404/clawds clawds && cd clawds && bash deploy/install-lxc.sh
 ```
 It prints the URL, the `admin` user and a generated password. Open it, go to **Connections** and paste **your own** provider API key. No keys ship with this repository.
 
