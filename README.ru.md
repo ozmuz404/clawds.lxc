@@ -1,3 +1,5 @@
+> **Aviso:** este es un fork de la comunidad; el texto de abajo es del proyecto original (ClawdsAgent/Clawds) y los badges y enlaces de descarga apuntan al original. Ver [README.md](README.md) y [README.es.md](README.es.md).
+
 <div align="center">
 
 <img src="docs/img/logo.svg" alt="Clawds" width="520">
