@@ -30,7 +30,7 @@ Historial detallado en [CAMBIOS.md](CAMBIOS.md).
 ### En un contenedor Proxmox/Debian (recomendado)
 Sigue [`deploy/PROXMOX.md`](deploy/PROXMOX.md). En resumen, dentro del contenedor y como root:
 ```bash
-git clone https://github.com/ozmuz404/clawds clawds && cd clawds && bash deploy/install-lxc.sh
+git clone https://github.com/ozmuz404/clawds.lxc clawds && cd clawds && bash deploy/install-lxc.sh
 ```
 Al terminar imprime la URL, el usuario `admin` y una contraseña generada. Luego entra, ve a **Conexiones** y pega **tu propia** API key del proveedor que uses. Ninguna clave viene incluida en el repositorio.
 
