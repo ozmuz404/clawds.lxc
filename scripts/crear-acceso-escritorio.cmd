@@ -1,6 +1,6 @@
 @echo off
 rem Crea en el Escritorio un acceso "Clawds" con su icono que abre Clawds en una ventana propia (como una app).
-rem Uso: crear-acceso-escritorio.cmd [URL]     Ejemplo: crear-acceso-escritorio.cmd http://192.168.1.50:8787
+rem Uso: crear-acceso-escritorio.cmd [URL]     Ejemplo: crear-acceso-escritorio.cmd http://IP-DEL-SERVIDOR:8787
 rem Si no das URL, la pregunta (Enter = http://localhost:8787). clawds.ico debe estar junto a este archivo.
 set "URL=%~1"
 if not defined URL set /p "URL=URL de Clawds [http://localhost:8787]: "
