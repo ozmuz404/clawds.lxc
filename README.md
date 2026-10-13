@@ -37,6 +37,8 @@ It prints the URL, the `admin` user and a generated password. Open it, go to **C
 ### Windows (local mode)
 Requires Node.js 20+ and Claude Code. Run `start.cmd`.
 
+**Desktop shortcut (optional):** run `scripts\crear-acceso-escritorio.cmd [URL]` (keep `clawds.ico` next to it, e.g. `http://localhost:8787` or your server's address). It creates a "Clawds" icon on your Desktop that opens the app in its own window using Edge or Chrome.
+
 ### Development
 ```bash
 cd server && npm install && cd ../app && npm install && npm run dev

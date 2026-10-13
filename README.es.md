@@ -37,6 +37,8 @@ Al terminar imprime la URL, el usuario `admin` y una contraseña generada. Luego
 ### En Windows (modo local)
 Requisitos: Node.js 20+ y Claude Code instalado (el instalador de Linux usa Node 22). Ejecuta `start.cmd`.
 
+**Acceso directo en el escritorio (opcional):** ejecuta `scripts\crear-acceso-escritorio.cmd [URL]` (con `clawds.ico` en la misma carpeta; la URL puede ser `http://localhost:8787` o la de tu servidor). Crea un icono "Clawds" en el Escritorio que abre la app en su propia ventana con Edge o Chrome.
+
 ### Desarrollo
 ```bash
 cd server && npm install && cd ../app && npm install && npm run dev
