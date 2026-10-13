@@ -121,7 +121,7 @@ export type Provider = {
   id: string; name: string; baseUrl: string; auth: 'bearer' | 'x-api-key'; liteDefault: boolean
   keyTail: string; hasKey: boolean; fetchedAt: number; error: string; models: ProviderModel[]
 }
-export type Conn = { loggedIn: boolean; pending: boolean; providers: Provider[] }
+export type Conn = { loggedIn: boolean; pending: boolean; loginUrl?: string; providers: Provider[] }
 
 // Сторонние MCP-серверы и навыки (значения ключей с сервера не приходят)
 export type McpServer = { id: string; name: string; type: 'stdio' | 'http' | 'sse'; command: string; args: string[]; url: string; envKeys: string[]; headerKeys: string[]; source: string; allBots: boolean }

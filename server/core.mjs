@@ -72,6 +72,8 @@ const claudeLoggedIn = () => {
 // Отпечаток файла входа: вход считается завершённым, только когда файл изменился (старый вход не в счёт)
 const credStamp = () => { try { const st = statSync(join(CONFIG_DIR, '.credentials.json')); return st.mtimeMs + ':' + st.size } catch { return '' } }
 let loginWatch = null
+let loginProc = null // Linux: процесс `claude auth login` (ждёт код со страницы входа)
+let loginUrl = ''
 // Лёгкая модель для разовых запросов (Haiku по подписке, без входа любая модель своего эндпоинта)
 function lightRunOpts() {
   const opts = { cwd: DATA, configDir: CONFIG_DIR, model: 'haiku' }
@@ -82,7 +84,7 @@ function lightRunOpts() {
   return { ...opts, model: m.id, env: envFor(p, m.id) }
 }
 let chatCache = null // последний разобранный файл переписок (чтобы не пересылать его с клиента ещё раз)
-export const connInfo = () => ({ t: 'conn', loggedIn: claudeLoggedIn(), pending: !!loginWatch, providers: PROV.view() })
+export const connInfo = () => ({ t: 'conn', loggedIn: claudeLoggedIn(), pending: !!(loginWatch || loginProc), loginUrl, providers: PROV.view() })
 const emitConn = () => emit(connInfo())
 
 /* ---------- Состояние и события ---------- */
@@ -1159,7 +1161,34 @@ export const commands = {
   /* Подключения */
   claudeLogin: async () => {
     if (loginWatch) return {}
-    if (process.platform !== 'win32') err(tr('Вход в Claude на Linux: в терминале выполните CLAUDE_CONFIG_DIR={dir} claude auth login', { dir: CONFIG_DIR }))
+    if (process.platform !== 'win32') {
+      // Сервер без экрана: запускаем вход сами, отдаём ссылку в интерфейс и ждём код со страницы Anthropic
+      if (loginProc) { try { loginProc.kill() } catch {} loginProc = null }
+      loginUrl = ''
+      mkdirSync(CONFIG_DIR, { recursive: true })
+      const wasIn = claudeLoggedIn()
+      const before = credStamp()
+      const child = spawn('claude', ['auth', 'login'], { env: { ...process.env, CLAUDE_CONFIG_DIR: CONFIG_DIR, BROWSER: 'true' }, stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true })
+      loginProc = child
+      let buf = ''
+      const onData = (d) => {
+        buf += d.toString()
+        const m = buf.match(/https:\/\/\S*oauth\/authorize\S*/)
+        if (m && !loginUrl) { loginUrl = m[0]; emitConn() }
+      }
+      child.stdout.on('data', onData); child.stderr.on('data', onData)
+      child.on('error', (e) => { loginProc = null; loginUrl = ''; emit({ t: 'toast', text: tr('Вход не завершён') + ': ' + e.message }); emitConn() })
+      child.on('close', () => {
+        if (loginProc === child) loginProc = null
+        loginUrl = ''
+        const done = claudeLoggedIn() && (credStamp() !== before || !wasIn)
+        emit({ t: 'toast', text: done ? tr('Вход в Claude выполнен') : tr('Вход не завершён') })
+        emitConn()
+      })
+      setTimeout(() => { if (loginProc === child) { try { child.kill() } catch {} } }, 10 * 60 * 1000).unref?.()
+      emitConn()
+      return {}
+    }
     const cmdFile = join(ROOT, 'server', 'login.cmd')
     const before = credStamp()
     const wasIn = claudeLoggedIn()
@@ -1177,6 +1206,13 @@ export const commands = {
     emitConn()
     return {}
   },
+  claudeLoginCode: async (actor, a) => {
+    const code = String(a.code ?? '').trim()
+    if (!loginProc || !code) err(tr('Вход не завершён'))
+    loginProc.stdin.write(code + '\n')
+    return {}
+  },
+  claudeLoginCancel: async () => { if (loginProc) { try { loginProc.kill() } catch {} } return {} },
   setLang: (actor, a) => { setLang(a.lang); recent.lang = getLang(); saveRecent() },
   claudeStatus: async () => { emitConn(); return { loggedIn: claudeLoggedIn() } },
   saveProvider: async (actor, a) => {
@@ -1383,4 +1419,4 @@ export function agentCall(token, action, args, files = []) {
 export const getState = () => S
 
 // Команды, доступные без открытой сессии
-export const GLOBAL_COMMANDS = new Set(['generateSkill', 'saveMcp', 'deleteMcp', 'testMcp', 'scanMcp', 'importMcp', 'getSkill', 'saveSkill', 'deleteSkill', 'scanSkills', 'importSkills', 'scanChats', 'previewChats', 'setLang', 'claudeLogin', 'claudeStatus', 'saveProvider', 'refreshModels', 'deleteProvider', 'setModelLite', 'addModel', 'removeModel', 'generatePrompt', 'healthCheck', 'listTemplates', 'saveTemplate', 'deleteTemplate', 'listRecent', 'inspectFolder', 'createSession', 'openSession', 'forgetSession'])
+export const GLOBAL_COMMANDS = new Set(['generateSkill', 'saveMcp', 'deleteMcp', 'testMcp', 'scanMcp', 'importMcp', 'getSkill', 'saveSkill', 'deleteSkill', 'scanSkills', 'importSkills', 'scanChats', 'previewChats', 'setLang', 'claudeLogin', 'claudeLoginCode', 'claudeLoginCancel', 'claudeStatus', 'saveProvider', 'refreshModels', 'deleteProvider', 'setModelLite', 'addModel', 'removeModel', 'generatePrompt', 'healthCheck', 'listTemplates', 'saveTemplate', 'deleteTemplate', 'listRecent', 'inspectFolder', 'createSession', 'openSession', 'forgetSession'])

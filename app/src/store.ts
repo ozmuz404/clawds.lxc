@@ -98,6 +98,8 @@ type State = {
   renameSession: (name: string) => void
 
   claudeLogin: () => Promise<void>
+  claudeLoginCode: (code: string) => Promise<void>
+  claudeLoginCancel: () => Promise<void>
   saveProvider: (a: { id?: string; name: string; baseUrl: string; apiKey: string; auth: string; liteDefault: boolean }) => Promise<{ id: string; ok: boolean; count: number; error?: string } | undefined>
   refreshModels: (id: string) => Promise<void>
   deleteProvider: (id: string) => void
@@ -158,7 +160,7 @@ export const useStore = create<State>((set, get) => {
     apply: (ev) => {
       switch (ev.t) {
         case 'tools': set({ tools: { mcp: ev.mcp, skills: ev.skills } }); break
-        case 'conn': setProviderRegistry(ev.providers); set({ conn: { loggedIn: ev.loggedIn, pending: ev.pending, providers: ev.providers } }); break
+        case 'conn': setProviderRegistry(ev.providers); set({ conn: { loggedIn: ev.loggedIn, pending: ev.pending, loginUrl: ev.loginUrl, providers: ev.providers } }); break
         case 'recent': set({ recent: ev.recent, ready: true }); break
         case 'closed':
           set({ session: null, bots: [], channels: [], messages: [], accounts: {}, typing: {}, running: 0, muted: [], active: '', panel: { kind: 'none' }, modal: null, mobileChat: false, workspace: emptyWorkspace, ready: true })
@@ -296,6 +298,8 @@ export const useStore = create<State>((set, get) => {
       void cmd('renameSession', { name })
     },
     claudeLogin: async () => { await cmd('claudeLogin') },
+    claudeLoginCode: async (code) => { await cmd('claudeLoginCode', { code }) },
+    claudeLoginCancel: async () => { await cmd('claudeLoginCancel') },
     saveProvider: async (a) => {
       const r = await cmd<{ id: string; ok: boolean; count: number; error?: string }>('saveProvider', a)
       if (r) say(r.ok ? t('Эндпоинт сохранён, моделей: {n}', { n: r.count }) : (r.error ?? t('Эндпоинт сохранён, список моделей не получен')))

@@ -14,17 +14,37 @@ const PRESETS = [
   { label: 'Другой', name: '', baseUrl: '', auth: 'bearer', lite: false },
 ]
 
+function LoginCodeBox() {
+  const { conn, claudeLoginCode, claudeLoginCancel } = useStore()
+  const [code, setCode] = useState('')
+  if (!conn.pending) return null
+  const send = () => { if (code.trim()) { claudeLoginCode(code.trim()); setCode('') } }
+  return (
+    <div style={{ flexBasis: '100%', display: 'flex', flexDirection: 'column', gap: 8 }}>
+      {conn.loginUrl
+        ? <div className="sub">1. <a href={conn.loginUrl} target="_blank" rel="noreferrer">{t('Откройте эту ссылку и войдите в Claude')}</a>. 2. {t('Скопируйте показанный код и вставьте сюда:')}</div>
+        : <div className="sub">{t('Готовлю ссылку для входа…')}</div>}
+      <div className="gen-row">
+        <input value={code} onChange={(e) => setCode(e.target.value)} placeholder={t('Код из Claude')} onKeyDown={(e) => { if (e.key === 'Enter') send() }} />
+        <button className="btn primary" disabled={!code.trim()} onClick={send}>{t('Отправить код')}</button>
+        <button className="btn" onClick={claudeLoginCancel}>{t('Отменить вход')}</button>
+      </div>
+    </div>
+  )
+}
+
 // Вход в Claude одним нажатием: баннер для запуска и настроек
 export function LoginBar() {
   const { conn, claudeLogin } = useStore()
   if (conn.loggedIn) return null
   return (
-    <div className="login-bar">
+    <div className="login-bar" style={{ flexWrap: 'wrap' }}>
       <div>
         <b>{t('Вход в Claude не выполнен')}</b>
         <div className="sub">{conn.pending ? t('Открылось окно входа, завершите вход в браузере. Страница обновится сама.') : t('Боты на подписке не запустятся. Войдите или подключите свой эндпоинт.')}</div>
       </div>
       <button className="btn primary" disabled={conn.pending} onClick={claudeLogin}><LogIn size={15} /> {conn.pending ? t('Жду входа…') : t('Войти в Claude')}</button>
+      <LoginCodeBox />
     </div>
   )
 }
@@ -132,6 +152,7 @@ export default function Connections() {
         </div>
         <button className="btn primary" disabled={conn.pending} onClick={claudeLogin}><LogIn size={15} /> {conn.loggedIn ? t('Войти заново') : conn.pending ? t('Жду входа…') : t('Войти в Claude')}</button>
       </div>
+      {conn.pending && <div className="conn-card"><LoginCodeBox /></div>}
 
       <h3>{t('Свои эндпоинты и модели')}</h3>
       <div className="sub" style={{ marginBottom: 8 }}>{t('Любой Anthropic-совместимый адрес: OpenRouter, LiteLLM, LM Studio, Ollama. Список моделей загружается сам, в выборе модели у бота по ним есть поиск.')}</div>
